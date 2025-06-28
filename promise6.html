@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Friendship Contract</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Roboto:wght@400;700&display=swap');
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      overflow:hidden;
+      font-family: 'Roboto', sans-serif;
+      position: relative;
+      animation: bgChange 4s linear infinite;
+      perspective: 2000px;
+    }
+    @keyframes bgChange {
+      0% { background: #ffedf0; }
+      25% { background: #ffcad4; }
+      50% { background: #ffe4b3; }
+      75% { background: #ffd1dc; }
+      100% { background: #ffedf0; }
+    }
+    .emoji-bg {
+      position:absolute;
+      font-size:2rem;
+      opacity:0;
+      z-index: 3;
+      animation: floatUp 4s ease-out forwards;
+    }
+    @keyframes floatUp {
+      0% { transform: translateY(100vh) scale(0.8); opacity:0; }
+      10% { opacity:0.6; }
+      100% { transform: translateY(-10vh) scale(1.2); opacity:0; }
+    }
+    .scene {
+      width: 60vw;
+      max-width:600px;
+      height: 60vh;
+      max-height:500px;
+      margin: 10vh auto;
+      position: relative;
+      transform-style: preserve-3d;
+      z-index: 2;
+    }
+    .card {
+      width:100%; height:100%;
+      position: absolute;
+      top:0; left:0;
+      transform-style: preserve-3d;
+      transition: transform 1s ease;
+      cursor: pointer;
+      z-index: 2;
+    }
+    .face {
+      position:absolute;
+      width:100%; height:100%;
+      backface-visibility: hidden;
+      border-radius: 30px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      background: rgba(255,255,255,0.9);
+      padding:20px; text-align:center;
+    }
+    .front {
+      background: rgba(255,255,255,0.95);
+      z-index:2;
+      transform: rotateY(0deg);
+    }
+    .back {
+      transform: rotateY(-180deg);
+    }
+    h1 { font-family: 'Dancing Script', cursive; font-size:2.5em; color:#e91e63; text-shadow:2px 2px #ffe4e1; margin-bottom:10px; }
+    .subtitle { font-size:1.1em; color:#4a148c; margin-bottom:20px; }
+    p { font-size:1.3em; color:#4a148c; margin-top:15px; line-height:1.6; }
+    .nav { position:absolute; bottom:20px; width:100%; display:flex; justify-content:space-between; padding:0 30px; }
+    .nav div { font-size:2em; color:#ff4081; user-select:none; transition:transform 0.2s; }
+    .nav div:hover { transform:scale(1.3); }
+  </style>
+</head>
+<body>
+  <div class="scene" id="scene">
+    <div class="card" id="card">
+      <div class="face front" id="front">
+        <h1>Friendship Contract</h1>
+        <div class="subtitle">By Jaideep for Amisha</div>
+        <div class="nav">
+          <div onclick="openContract()">🔓</div>
+        </div>
+      </div>
+      <div class="face back" id="back">
+        <h1 id="title"></h1>
+        <p id="text"></p>
+        <div class="nav">
+          <div onclick="prev(event)">⟵</div>
+          <div onclick="next(event)">⟶</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const pages = [
+      {label:"Gundi", emoji:"🐵", text:"Main tujhse kabhi baat karna nahi chhodunga, na ignore karunga."},
+      {label:"Bandariya", emoji:"🐒", text:"Chahe tum mujhe maaro, main phir bhi tumhe nahi maarunga."},
+      {label:"Pagal", emoji:"🤪", text:"Main kisi ko nahi bataunga ki hum baat karte hain, jab tak tum khud na chaho."},
+      {label:"Gadhe", emoji:"🦌", text:"Main tumhe kabhi gaali nahi dunga, chahe tum mujhe do bhi."},
+      {label:"Maharani", emoji:"👸", text:"Main tumse kabhi jhooth nahi bolunga."},
+      {label:"Hitler Ji", emoji:"🎖️", text:"Main hamesha tumhara support karunga."},
+      {label:"Madam Ji", emoji:"🦢", text:"Tum apne overthinking thoughts mujhse share kar sakti ho, main bura nahi manunga."},
+      {label:"AMISHA LALWANI", emoji:"💖", text:"Tu 150 kg+ bhi ho jaye , mera behaviour kabhi nahi badlega."},
+      {label:"", emoji:"💬", text:"From the time I have got you as my best friend my days have become beautiful."},
+      {label:"", emoji:"🌟", text:"Today is the best day of my life."},
+      {label:"", emoji:"💕", text:"I haven’t seen any girl more loyal than you."},
+      {label:"", emoji:"💬", text:"You are my free ka therapist."},
+      {label:"AMISHA LALWANI", emoji:"💖", text:"Hamare beech kuch bhi ho jaye, main hamari baatein kisi ko nahi dekhayunga."},
+      {label:"Gundi", emoji:"🐵", text:"Tumhari safety meri pehli priority rahegi"}
+    ];
+    let idx = 0;
+    const card = document.getElementById('card');
+    const front = document.getElementById('front');
+    const back = document.getElementById('back');
+    const titleEl = document.getElementById('title');
+    const textEl = document.getElementById('text');
+
+    function showPage() {
+      const page = pages[idx];
+      if (!page.label && !page.emoji) {
+        titleEl.style.display = 'none';
+      } else {
+        titleEl.style.display = 'block';
+        titleEl.innerText = `${page.emoji}${page.label?` Promise to ${page.label}`:''}${page.emoji}`;
+      }
+      textEl.innerText = page.text;
+    }
+    function next(e) { e.stopPropagation(); idx=(idx+1)%pages.length; showPage(); }
+    function prev(e) { e.stopPropagation(); idx=(idx-1+pages.length)%pages.length; showPage(); }
+    function openContract() {
+      card.style.transform = 'rotateY(-180deg)';
+      showPage();
+    }
+
+    // Floating emojis background
+    function createEmoji() {
+      const el = document.createElement('div');
+      el.className = 'emoji-bg';
+      const emojis = pages.map(p=>p.emoji).filter(e=>e);
+      el.innerText = emojis[Math.floor(Math.random()*emojis.length)];
+      el.style.left = Math.random()*100 + 'vw';
+      document.body.appendChild(el);
+      setTimeout(()=>el.remove(),4000);
+    }
+    setInterval(createEmoji,200);
+  </script>
+</body>
+</html>
